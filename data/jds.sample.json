@@ -1,0 +1,54 @@
+[
+  {
+    "company": "示例科技 ExampleTech",
+    "role": "高级算法工程师（大模型推理）",
+    "salary": "30-50K·15薪",
+    "experience": "3-5年",
+    "education": "本科及以上",
+    "location": "远程 / 深圳",
+    "industry": "人工智能",
+    "size": "500-2000人",
+    "bonus": "有 vLLM/TensorRT-LLM 落地经验、推理优化论文",
+    "url": "https://example.com/jobs/llm-infer-001",
+    "desc": "负责大模型推理服务的性能优化：KV Cache 管理、连续批处理、量化与投机解码；与算法团队协作把研究成果工程化上线。要求熟悉 Transformer 推理链路，能定位显存/吞吐瓶颈，有 PagedAttention / continuous batching 实践者优先。"
+  },
+  {
+    "company": "梦想云 DreamCloud",
+    "role": "后端开发工程师（Go）",
+    "salary": "25-40K",
+    "experience": "3年以上",
+    "education": "本科",
+    "location": "上海",
+    "industry": "云计算",
+    "size": "2000人以上",
+    "bonus": "大规模分布式系统经验、开源贡献",
+    "url": "https://example.com/jobs/backend-go-002",
+    "desc": "负责高并发后端服务的设计与开发，使用 Go + gRPC + Kubernetes，关注服务可用性、限流降级、链路追踪与可观测性。要求扎实的数据结构与算法基础，熟悉 MySQL/Redis，理解分布式一致性。"
+  },
+  {
+    "company": "数据洞察 InsightWorks",
+    "role": "数据科学家 / 机器学习工程师",
+    "salary": "$120k-$160k",
+    "experience": "Mid-Senior",
+    "education": "Master's preferred",
+    "location": "Remote (US)",
+    "industry": "FinTech",
+    "size": "200-500",
+    "bonus": "production ML pipelines, feature stores, A/B testing",
+    "url": "https://example.com/jobs/ds-ml-003",
+    "desc": "Build and ship ML models end-to-end: feature engineering, training, evaluation, and online serving. Strong Python, SQL, and experiment design. Bonus: experience with recommendation or risk models, MLOps, and model monitoring."
+  },
+  {
+    "company": "界面工坊 PixelForge",
+    "role": "前端工程师（React）",
+    "salary": "20-32K",
+    "experience": "2-4年",
+    "education": "大专及以上",
+    "location": "杭州",
+    "industry": "互联网",
+    "size": "100-500人",
+    "bonus": "性能优化、可视化、组件库建设",
+    "url": "https://example.com/jobs/frontend-react-004",
+    "desc": "负责 Web 前端开发，技术栈 React + TypeScript + Vite。关注首屏性能、渲染优化、状态管理与工程化。要求理解浏览器渲染原理、事件循环，有大型 SPA 或组件库经验者优先。"
+  }
+]

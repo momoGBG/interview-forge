@@ -1,0 +1,35 @@
+[project]
+name = "interview-forge"
+version = "0.1.0"
+description = "本地优先、RAG 驱动的面试备战知识系统：grounded 答案 + Obsidian/Anki 沉淀 + AI 岗位匹配 + 模拟面试"
+requires-python = ">=3.10"
+dependencies = [
+    "httpx>=0.27",
+    "pyyaml>=6.0",
+    "psycopg[binary]>=3.1",
+    "click>=8.1",
+    "fastapi>=0.110",
+    "uvicorn[standard]>=0.29",
+    "python-multipart>=0.0.9",
+    "pypdf>=4.0",
+    "beautifulsoup4>=4.12",
+    "openpyxl>=3.1.5",
+    "faster-whisper>=1.2.1",
+    "ddgs>=9.0",
+]
+
+[project.scripts]
+forge = "src.cli:cli"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
+
+[dependency-groups]
+dev = ["pytest>=8.0"]
+
+[tool.pytest.ini_options]
+markers = ["e2e: 端到端真实调用（需要 vLLM/Anki/Postgres 全部在线）"]

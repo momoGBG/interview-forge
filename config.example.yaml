@@ -1,0 +1,89 @@
+# interview-forge 配置示例
+# 用法：cp config.example.yaml config.yaml，再把端点/路径改成你自己的。
+# config.yaml 已被 .gitignore 忽略，不会被提交——放心填私有地址。
+#
+# 端点既可以是局域网，也可以是任何 OpenAI 兼容服务（本地 vLLM / Ollama / 云 API）。
+# 局域网/本机地址会自动绕过系统代理直连（见 src/infra/http.py）。
+
+# —— 你的岗位方向（决定全套 prompt 的口吻；改这一处即可换岗位）——
+# field      : 面试官/教练/招聘官的领域前缀，会拼成「资深「<field>」面试官」等。
+#              例：AI 算法 / 后端 / 前端 / 数据 / 算法 / 产品经理 / 测试 …
+# role_title : 默认人设里你的职位名（无简历时用）。
+# topics     : 仅作 UI 主题下拉的默认建议，可留默认。
+profile:
+  field: "AI 算法"
+  role_title: "AI 算法工程师"
+  topics: ["inference", "transformer", "infra", "agent", "general"]
+
+llm:
+  # 任意 OpenAI 兼容的 /v1 端点。本地 vLLM 示例：http://127.0.0.1:8000/v1
+  base_url: "http://127.0.0.1:8000/v1"
+  model: "your-model-name"        # 如 Qwen2.5-32B-Instruct
+  api_key: "EMPTY"                # 本地 vLLM 不校验填占位；云 API 填真实 key
+  max_tokens: 8000                # reasoning 模型会先思考，给足预算避免 content 被截断
+  temperature: 0.4
+  timeout: 600                    # 秒
+  match_workers: 16               # 岗位匹配并发数（按你 LLM 服务的吞吐调）
+
+embedding:
+  url: "http://127.0.0.1:7930/v1/embeddings"
+  model: "Qwen3-Embedding-8B"
+  # 服务端原生维度（如 Qwen3-Embedding 为 4096）。Matryoshka 模型可安全截断；
+  # pgvector hnsw 索引上限 2000 维，客户端截到 dim 维并重新 L2 归一化（见 embed.py）。
+  raw_dim: 4096
+  dim: 1024
+reranker:
+  url: "http://127.0.0.1:7929/v1/rerank"
+  model: "Qwen3-Reranker-8B"
+
+# 检索参数
+retrieval:
+  recall_k: 30          # 混合检索召回数
+  rerank_k: 6           # 精排后进生成的片段数
+  rrf_k: 60             # RRF 融合常数
+  chunk_target_tokens: 450
+  chunk_overlap_tokens: 50
+
+anki:
+  url: "http://127.0.0.1:8765"    # AnkiConnect 插件默认端口
+  deck: "InterviewQA"
+  note_type: "InterviewQA"
+
+postgres:
+  host: "127.0.0.1"
+  port: 5434                      # 与 docker-compose.yml 的端口映射一致
+  db: "interview_forge"
+  user: "forge"
+  password: "forge"
+
+obsidian:
+  vault_path: "./vault"           # 项目内 vault，可直接用 Obsidian 打开
+  notes_subdir: "面试备战"
+
+# 岗位匹配 / 简历
+jobs:
+  # 三选一/可并存的 JD 数据源：
+  json: "data/jds.sample.json"                # forge jobs-import 读这个（推荐，通用接口）
+  folder: "data/jds_xlsx"                     # forge jobs-scan 读这个目录下所有 *.xlsx
+  resume: "data/resume.example.txt"           # forge resume 导入的简历(pdf/html/txt/md)
+  # 薪资期望（月薪K，匹配/排序基准；不是过往薪资）。越高越好，低于 min 视为偏低。
+  salary_expect_min: 25
+  salary_expect_max: 35
+
+# 本地 ASR（口语转写，语音面试模式）
+asr:
+  model: "small"          # tiny/base/small/medium/large-v3；有较好显卡可上 large-v3
+  device: "auto"          # auto→优先 CUDA，失败回退 CPU
+  language: "zh"
+
+# 前沿实时检索：默认免 key 走 DuckDuckGo + HuggingFace papers→arXiv + 模型卡；
+# 填了 firecrawl.api_key 或自部署 base_url 则优先用 Firecrawl。
+frontier:
+  backend: "auto"
+  k: 3
+firecrawl:
+  api_key: ""             # 留空=不用；自部署填你的 base_url 即可（见 README）
+  base_url: "https://api.firecrawl.dev"
+
+# 出网代理（前沿检索/出网走这个；本机/局域网调用不走）。不需要就留空 ""。
+proxy: ""

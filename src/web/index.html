@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>面试知识炼炉 · interview-forge</title>
+<style>
+:root{
+  --bg:#0f1115; --panel:#171a21; --panel2:#1e222b; --line:#2a2f3a;
+  --fg:#e7eaf0; --muted:#9aa3b2; --accent:#5b9dff; --accent2:#7c5cff;
+  --ok:#3ecf8e; --warn:#ffb454; --bad:#ff6b6b;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,"Segoe UI",system-ui,sans-serif;
+  background:var(--bg);color:var(--fg);font-size:15px;line-height:1.6}
+header{display:flex;align-items:center;gap:14px;padding:14px 22px;
+  border-bottom:1px solid var(--line);background:var(--panel);position:sticky;top:0;z-index:10}
+header h1{font-size:17px;margin:0;font-weight:650}
+header .logo{width:30px;height:30px;border-radius:8px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex;align-items:center;justify-content:center;font-size:16px}
+nav{display:flex;gap:4px;margin-left:18px}
+nav button{background:none;border:none;color:var(--muted);padding:8px 14px;
+  border-radius:8px;cursor:pointer;font-size:14px}
+nav button.active{background:var(--panel2);color:var(--fg)}
+#health-dot{margin-left:auto;font-size:13px;color:var(--muted);cursor:pointer}
+main{max-width:1040px;margin:0 auto;padding:22px}
+.page{display:none}.page.active{display:block}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:16px}
+label{display:block;font-size:13px;color:var(--muted);margin:0 0 6px}
+textarea,input,select{width:100%;background:var(--panel2);border:1px solid var(--line);
+  color:var(--fg);border-radius:9px;padding:10px 12px;font:inherit;outline:none}
+textarea{resize:vertical;min-height:74px}
+textarea:focus,input:focus,select:focus{border-color:var(--accent)}
+.row{display:flex;gap:12px;flex-wrap:wrap}.row>div{flex:1;min-width:130px}
+button.primary{background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff;border:none;padding:11px 22px;border-radius:9px;font-size:15px;
+  cursor:pointer;font-weight:600;margin-top:12px}
+button.primary:disabled{opacity:.5;cursor:not-allowed}
+button.ghost{background:var(--panel2);border:1px solid var(--line);color:var(--fg);
+  padding:7px 13px;border-radius:8px;cursor:pointer;font-size:13px}
+.chips{display:flex;gap:7px;flex-wrap:wrap;margin:6px 0}
+.chip{font-size:12px;background:var(--panel2);border:1px solid var(--line);
+  border-radius:20px;padding:3px 11px;color:var(--muted)}
+.badge{font-size:12px;border-radius:6px;padding:2px 9px;font-weight:600}
+.badge.ok{background:rgba(62,207,142,.15);color:var(--ok)}
+.badge.bad{background:rgba(255,180,84,.15);color:var(--warn)}
+.muted{color:var(--muted);font-size:13px}
+details.reason{margin:10px 0;border:1px dashed var(--line);border-radius:9px;padding:8px 12px}
+details.reason summary{cursor:pointer;color:var(--muted);font-size:13px}
+details.reason pre{white-space:pre-wrap;color:#8b93a4;font-size:12.5px;margin:8px 0 0}
+.md h1{font-size:21px;margin:.6em 0 .3em}.md h2{font-size:18px;margin:1em 0 .4em;
+  padding-bottom:4px;border-bottom:1px solid var(--line)}
+.md h3{font-size:15.5px;color:var(--accent);margin:.9em 0 .3em}
+.md code{background:var(--panel2);padding:1px 6px;border-radius:5px;font-size:13px;
+  color:#ffd596}
+.md pre{background:var(--panel2);padding:12px;border-radius:9px;overflow:auto}
+.md pre code{background:none;color:#cdd3df}
+.md a{color:var(--accent);text-decoration:none}
+.md blockquote{border-left:3px solid var(--accent);margin:.5em 0;padding:.2em 0 .2em 14px;color:var(--muted)}
+.cite{color:var(--accent2);font-size:.85em;background:rgba(124,92,255,.12);
+  padding:0 5px;border-radius:5px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line)}
+th{color:var(--muted);font-weight:500}
+tr.click{cursor:pointer}tr.click:hover{background:var(--panel2)}
+.seg{display:flex;gap:4px;margin-bottom:12px}
+.seg button{flex:0;background:var(--panel2);border:1px solid var(--line);color:var(--muted);
+  padding:7px 14px;border-radius:8px;cursor:pointer;font-size:13px;white-space:nowrap}
+.seg button.active{color:var(--fg);border-color:var(--accent)}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid var(--line);
+  border-top-color:var(--accent);border-radius:50%;animation:s .7s linear infinite;vertical-align:-2px}
+@keyframes s{to{transform:rotate(360deg)}}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--panel2);
+  border:1px solid var(--line);padding:12px 16px;border-radius:9px;display:none;max-width:360px}
+/* 模拟面试 */
+.bubble{max-width:84%;padding:11px 15px;border-radius:14px;margin:8px 0;white-space:pre-wrap;line-height:1.6}
+.bubble.q{background:var(--panel2);border:1px solid var(--line);border-top-left-radius:4px}
+.bubble.a{background:linear-gradient(135deg,rgba(91,157,255,.18),rgba(124,92,255,.18));
+  border:1px solid var(--accent);margin-left:auto;border-top-right-radius:4px}
+.bubble .who{font-size:12px;color:var(--muted);margin-bottom:4px}
+.score5{display:flex;gap:6px;margin:8px 0;flex-wrap:wrap}
+.dim{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:5px 9px;font-size:12px}
+.dim b{font-size:14px}
+.fb{background:rgba(255,180,84,.08);border-left:3px solid var(--warn);padding:8px 12px;
+  border-radius:0 8px 8px 0;margin:8px 0;font-size:14px}
+.diffbar{display:flex;gap:3px;align-items:center}
+.diffbar i{width:14px;height:6px;border-radius:3px;background:var(--line)}
+.diffbar i.on{background:var(--accent)}
+.radar{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+.radar .rd{flex:1;min-width:90px;text-align:center;background:var(--panel2);border-radius:9px;padding:10px}
+.radar .rd .v{font-size:22px;font-weight:700}
+.chip.click,.cite{cursor:pointer}
+.chip.click:hover,.cite:hover{filter:brightness(1.3)}
+.modal-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:100;
+  align-items:center;justify-content:center;padding:24px}
+.modal-bx{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+  max-width:760px;width:100%;padding:20px 22px;position:relative;box-shadow:0 12px 40px rgba(0,0,0,.5)}
+.modal-x{position:absolute;top:8px;right:12px;background:none;border:none;
+  color:var(--muted);font-size:18px;cursor:pointer}
+/* 岗位匹配：左栏画像+筛选 / 右栏分数卡片 */
+.jobs-bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.jobs-wrap{display:flex;gap:14px;align-items:flex-start}
+.jobs-side{flex:0 0 268px;position:sticky;top:14px}
+.jobs-main{flex:1;min-width:0}
+.jobs-side .me .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.filters label{display:block;font-size:12px;color:var(--muted);margin:9px 0 3px}
+.jobcount{font-size:13px;color:var(--muted);margin:4px 2px 12px}
+.jdc{background:var(--panel);border:1px solid var(--line);border-radius:11px;margin-bottom:11px;overflow:hidden}
+.jdc>.hd{padding:13px 15px;cursor:pointer;display:flex;gap:13px;align-items:flex-start}
+.jdc>.hd:hover{background:var(--panel2)}
+.jdc .score{flex:0 0 54px;text-align:center}
+.jdc .score .num{font-size:23px;font-weight:800;line-height:1.05}
+.jdc .score .v{font-size:10px;color:var(--muted)}
+.jdc.s-strong .num{color:var(--ok)}.jdc.s-stretch .num{color:var(--accent)}.jdc.s-weak .num{color:var(--muted)}
+.jdc .ttl{font-weight:650;font-size:15px}
+.jdc .co{color:var(--muted);font-size:13px;margin-top:1px}
+.jbar{height:6px;border-radius:3px;background:var(--panel2);margin-top:7px;overflow:hidden}
+.jbar>i{display:block;height:100%;border-radius:3px}
+.jdc.s-strong .jbar>i{background:var(--ok)}.jdc.s-stretch .jbar>i{background:var(--accent)}.jdc.s-weak .jbar>i{background:var(--muted)}
+.jreason{font-size:12px;color:var(--muted);margin-top:6px;font-style:italic}
+.jdc .body{display:none;padding:2px 15px 15px;border-top:1px solid var(--line)}
+.jdc.open .body{display:block}
+.jcols{display:flex;gap:14px;flex-wrap:wrap;margin:12px 0 4px}
+.jcol{flex:1;min-width:200px}
+.jcol h4{margin:8px 0 4px;font-size:13px}
+.jcol.good h4{color:var(--ok)}.jcol.warn h4{color:var(--warn)}
+.jcol ul{margin:0;padding-left:18px;font-size:13px;color:var(--fg)}
+.jacts{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin-top:12px}
+@media(max-width:880px){.jobs-wrap{flex-direction:column}.jobs-side{position:static;flex:auto;width:100%}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">🔥</div>
+  <h1>面试知识炼炉</h1>
+  <nav>
+    <button data-page="ask" class="active">提问</button>
+    <button data-page="mock">模拟面试</button>
+    <button data-page="jobs">岗位匹配</button>
+    <button data-page="kb">知识库</button>
+    <button data-page="lib">题库</button>
+  </nav>
+  <span id="health-dot" title="点击查看健康状态">● 检查中</span>
+</header>
+<main>
+  <!-- 提问 -->
+  <section class="page active" id="page-ask">
+    <div class="card">
+      <label>题目</label>
+      <textarea id="q" placeholder="例如：PagedAttention 解决了 KV Cache 的什么问题？显存利用率提升多少？"></textarea>
+      <div class="row" style="margin-top:10px">
+        <div><label>主题</label>
+          <select id="topic">
+            <option>inference</option><option>transformer</option><option>infra</option>
+            <option>agent</option><option>leetcode</option><option value="general">general</option>
+          </select></div>
+        <div><label>难度 1-5</label><input id="diff" type="number" min="1" max="5" value="3"></div>
+        <div><label>频率 1-5</label><input id="freq" type="number" min="1" max="5" value="4"></div>
+        <div><label>推 Anki 卡</label>
+          <select id="anki"><option value="true">是</option><option value="false">否</option></select></div>
+        <div><label>🌐 实时前沿</label>
+          <select id="frontier"><option value="false">关</option><option value="true">开(出网抓最新)</option></select></div>
+      </div>
+      <button class="primary" id="askBtn">生成答案</button>
+    </div>
+    <div class="card" id="result" style="display:none">
+      <div id="retrieval"></div>
+      <details class="reason" id="reasonBox" style="display:none">
+        <summary>🧠 模型思考过程</summary><pre id="reason"></pre>
+      </details>
+      <div class="md" id="answer"></div>
+      <div id="meta" style="margin-top:14px"></div>
+    </div>
+  </section>
+
+  <!-- 模拟面试 -->
+  <section class="page" id="page-mock">
+    <div class="card" id="mockSetup">
+      <div class="row">
+        <div><label>主题</label>
+          <select id="mockTopic">
+            <option>inference</option><option>transformer</option><option>infra</option>
+            <option>agent</option><option value="multimodal">multimodal</option>
+            <option value="general">general</option></select></div>
+        <div><label>题数</label><input id="mockN" type="number" min="2" max="8" value="4"></div>
+        <div><label>绑定岗位(可选 jd_id)</label><input id="mockJd" placeholder="留空=通用"></div>
+      </div>
+      <button class="primary" id="mockStartBtn">开始面试</button>
+      <span class="muted" style="margin-left:10px">面试官会规划大纲、出题、检索核对你的答案、自适应难度并追问。</span>
+    </div>
+    <div class="card" id="mockArea" style="display:none">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <b id="mockProgress">Q1</b>
+        <span class="muted">难度</span><span class="diffbar" id="mockDiff"></span>
+        <span style="margin-left:auto"></span>
+        <button class="ghost" id="mockFinishBtn">结束并出报告</button>
+      </div>
+      <div id="mockChat" style="margin-top:12px"></div>
+      <div id="mockInputRow" style="margin-top:10px">
+        <textarea id="mockAns" placeholder="说出你的答案（面试是开口练，先组织成 本质→原理→算账→选型→踩坑）。可点🎤口头作答。"></textarea>
+        <div id="oralCoach"></div>
+        <div style="display:flex;gap:10px;align-items:center;margin-top:8px">
+          <button class="primary" id="mockSendBtn" style="margin:0">提交回答</button>
+          <button class="ghost" id="recBtn">🎤 口头作答</button>
+          <span id="recStatus" class="muted"></span>
+        </div>
+      </div>
+    </div>
+    <div class="card" id="mockReport" style="display:none"></div>
+  </section>
+
+  <!-- 岗位匹配 -->
+  <section class="page" id="page-jobs">
+    <div class="card jobs-bar">
+      <button class="ghost" onclick="importDefaultResume()">导入默认简历</button>
+      <label class="ghost" style="cursor:pointer">上传简历
+        <input id="resumeFile" type="file" accept=".pdf,.html,.htm,.md,.txt" style="display:none"></label>
+      <span id="jobStats" class="muted"></span>
+      <button class="ghost" onclick="scanJobs()">扫描JD库</button>
+      <span style="margin-left:auto"></span>
+      <label class="muted" style="display:flex;align-items:center;gap:5px;cursor:pointer">
+        <input type="checkbox" id="matchRedo" style="width:auto;min-height:0">全量重评</label>
+      <button class="primary" id="matchBtn" style="margin:0">运行 AI 匹配</button>
+      <span id="matchStatus" class="muted"></span>
+    </div>
+    <div class="jobs-wrap">
+      <div class="jobs-side">
+        <div class="card me">
+          <h2>我的画像</h2>
+          <div id="resumeInfo" class="muted">加载中…</div>
+          <div id="resumeProfile" class="tags"></div>
+        </div>
+        <div class="card filters">
+          <h2>筛选</h2>
+          <label>契合度</label>
+          <select id="f-verdict"><option value="">全部</option>
+            <option value="strong">稳 (strong)</option>
+            <option value="stretch">够一够 (stretch)</option>
+            <option value="weak">差距大 (weak)</option></select>
+          <label>月薪上限 ≥</label>
+          <select id="f-sal"><option value="0">不限</option>
+            <option value="30">30K</option><option value="40">40K</option>
+            <option value="50">50K</option><option value="60">60K</option>
+            <option value="80">80K</option><option value="100">100K</option></select>
+          <label>排序</label>
+          <select id="f-sort"><option value="score">匹配度高→低</option>
+            <option value="salary">月薪上限高→低</option></select>
+          <label>搜索（公司/岗位）</label>
+          <input id="f-q" placeholder="输入关键词…">
+        </div>
+      </div>
+      <div class="jobs-main">
+        <div class="jobcount" id="jobCount">还没有匹配结果，点右上「运行 AI 匹配」。</div>
+        <div id="jobList"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 知识库 -->
+  <section class="page" id="page-kb">
+    <div class="card">
+      <div class="seg" id="ingSeg">
+        <button data-m="url" class="active">URL</button>
+        <button data-m="text">粘贴文本</button>
+        <button data-m="file">上传文件</button>
+      </div>
+      <div id="ing-url"><label>权威源 URL（arXiv / HF 模型卡 / 官方文档，出网经代理）</label>
+        <input id="url" placeholder="https://arxiv.org/abs/2309.06180"></div>
+      <div id="ing-text" style="display:none"><label>粘贴文本</label>
+        <textarea id="text" style="min-height:140px"></textarea></div>
+      <div id="ing-file" style="display:none"><label>本地文件（pdf / md / txt）</label>
+        <input id="file" type="file" accept=".pdf,.md,.txt"></div>
+      <div class="row" style="margin-top:10px"><div>
+        <label>contextual 定位句（提升召回，稍慢）</label>
+        <select id="ctx"><option value="true">开</option><option value="false">关</option></select></div></div>
+      <button class="primary" id="ingBtn">摄入到知识库</button>
+      <span id="ingStatus" class="muted" style="margin-left:12px"></span>
+    </div>
+    <div class="card">
+      <div style="display:flex;align-items:center"><b>知识源</b>
+        <button class="ghost" style="margin-left:auto" onclick="loadSources()">刷新</button></div>
+      <table style="margin-top:10px"><thead><tr><th>#</th><th>类型</th><th>标题</th><th>块数</th><th>时间</th></tr></thead>
+        <tbody id="srcBody"></tbody></table>
+    </div>
+  </section>
+
+  <!-- 题库 -->
+  <section class="page" id="page-lib">
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <b>题库</b><span id="libStats" class="muted"></span>
+        <span style="margin-left:auto"></span>
+        <button class="ghost" id="libGenAllBtn" onclick="genAllPending(this)" title="把所有待答题并发刷成带出处答案+卡片">⚡ 一键补答全部待答</button>
+        <button class="ghost" onclick="loadLib()">刷新</button>
+      </div>
+      <div class="seg" id="libSeg" style="margin-top:12px">
+        <button data-f="all" class="active">全部</button>
+        <button data-f="pending">待答</button>
+        <button data-f="grounded">有出处</button>
+      </div>
+      <input id="libSearch" placeholder="🔍 搜题目 / 主题，输入即时筛选…" style="margin-bottom:10px" oninput="renderLib()">
+      <table><thead><tr><th>#</th><th>题目</th><th>主题</th><th>状态</th><th>难/频</th></tr></thead>
+        <tbody id="libBody"></tbody></table>
+    </div>
+    <div class="card" id="ansView" style="display:none"></div>
+  </section>
+</main>
+<div class="toast" id="toast"></div>
+<script src="/app.js"></script>
+</body>
+</html>

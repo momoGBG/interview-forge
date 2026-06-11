@@ -1,0 +1,5 @@
+# 统一行尾为 LF（仓库内），避免跨平台 diff 噪音
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.pdf binary

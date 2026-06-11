@@ -1,0 +1,22 @@
+# —— 私有配置（含端点/密钥/路径），务必不要提交 ——
+config.yaml
+
+# —— 个人数据：简历 / JD / 生成的笔记 ——
+data/*
+!data/jds.sample.json
+!data/resume.example.txt
+vault/**
+!vault/.gitkeep
+models/
+
+# —— Python / 工具产物 ——
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# —— 运行时日志 / 临时 ——
+*.log
+serve.out
+serve.err
+.run/

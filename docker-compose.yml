@@ -1,0 +1,23 @@
+# 仅 Postgres(+pgvector)。LLM 用用户现成的 vLLM，不在此编排。
+services:
+  postgres:
+    # Phase 1：pgvector/pgvector:pg16（含 pgvector 扩展，支持混合检索的向量侧）。
+    image: pgvector/pgvector:pg16
+    container_name: interview-forge-pg
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: forge
+      POSTGRES_PASSWORD: forge
+      POSTGRES_DB: interview_forge
+    ports:
+      - "5434:5432"            # 宿主机 5434 → 容器 5432（避开本机可能已占用的 5432）；与 config 的 postgres.port 一致
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U forge -d interview_forge"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  pgdata:
