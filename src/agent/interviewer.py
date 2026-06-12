@@ -110,7 +110,7 @@ class MockInterviewer:
         }
 
     # ---------- 开场：规划大纲 ----------
-    def start(self, *, topic: str = "inference", jd_id: int | None = None,
+    def start(self, *, topic: str = "general", jd_id: int | None = None,
               n_questions: int = 5) -> dict:
         jd_ctx = ""
         if jd_id:

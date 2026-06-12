@@ -103,8 +103,7 @@ src/
 vault/                 # 项目内 Obsidian vault（可直接打开）
 ```
 
-> UI 的「主题」下拉（inference/transformer/...）只是示例建议，按需在 `src/web/index.html`
-> 自行替换，不影响匹配/出题逻辑。
+> UI 的「主题」下拉选项来自 `config.yaml` 的 `profile.topics`，换岗位时一并改掉即可。
 
 ## 测试
 

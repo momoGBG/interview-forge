@@ -25,7 +25,7 @@ def test_parse_salary_offline():
     from src.pipelines.jobs import parse_salary
     assert parse_salary("30-60K·15薪") == {"min": 30, "max": 60, "months": 15,
                                            "annual_max": 900}
-    assert parse_salary("13-19K")["max"] == 19
+    assert parse_salary("20-35K")["max"] == 35
     assert parse_salary("8千-1.2万")["max"] == 12   # 万→K 换算
     assert parse_salary("面议") == {"months": 12}
     assert parse_salary("") == {}

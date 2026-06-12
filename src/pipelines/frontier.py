@@ -199,9 +199,11 @@ class Frontier:
                               (jd_id,)).fetchone()
         if not jd:
             raise ValueError(f"JD {jd_id} 不存在")
-        sys = ("你是 AI 论文检索专家。读岗位 JD，提炼出最值得去 arXiv/HuggingFace 搜"
-               "**最新论文**的英文技术检索词（具体到模型/方法名，如 'diffusion transformer "
-               "text-to-video'、'flow matching image generation'、'RLHF multimodal'）。"
+        from ..infra.config import profile_cfg
+        field = profile_cfg(self.cfg)["field"]
+        sys = (f"你是「{field}」领域的技术情报检索专家。读岗位 JD，提炼出最值得去 "
+               "arXiv/HuggingFace 搜**最新论文/技术资料**的英文技术检索词"
+               "（具体到方法/模型/框架名，而非宽泛大词）。"
                f'只输出 JSON：{{"queries":["...", 共 {n} 个]}}')
         user = f"岗位：{jd[1]} @ {jd[0]}\nJD 正文：\n{jd[2][:2200]}"
         llm = LLM(self.cfg)

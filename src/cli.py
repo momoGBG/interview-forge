@@ -184,7 +184,7 @@ def transcribe(audio):
 
 
 @cli.command()
-@click.option("--topic", default="inference")
+@click.option("--topic", default="general", help="主题，建议取 config.profile.topics 之一")
 @click.option("--jd-id", type=int, default=None)
 @click.option("-n", "--questions", type=int, default=4)
 def mock(topic, jd_id, questions):

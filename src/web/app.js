@@ -85,10 +85,22 @@ function askFollowup(text){
 }
 
 // ---------- 健康 ----------
+// 用 config.profile.topics 重建主题下拉（保留当前选中项；general 兜底始终在）
+function fillTopics(topics){
+  if(!Array.isArray(topics)||!topics.length)return;
+  const opts=[...new Set([...topics,"general"])];
+  for(const id of ["topic","mockTopic"]){
+    const sel=document.getElementById(id);if(!sel)continue;
+    const cur=sel.value;
+    sel.innerHTML=opts.map(t=>`<option value="${t}">${t}</option>`).join("");
+    if(opts.includes(cur))sel.value=cur;
+  }
+}
 async function loadHealth(){
   const dot=document.getElementById("health-dot");
   try{
     const h=await (await fetch("/api/health")).json();
+    fillTopics(h.profile&&h.profile.topics);
     const ok=h.vllm.ok&&h.postgres.ok&&h.anki.ok;
     dot.style.color=ok?"var(--ok)":"var(--warn)";
     dot.textContent=(ok?"● 就绪":"● 部分异常")+` · vLLM ${h.vllm.ok?h.vllm.model:"✗"} · PG ${h.postgres.ok?h.postgres.chunks+"块":"✗"} · Anki ${h.anki.ok?"v"+h.anki.version:"✗"}`;

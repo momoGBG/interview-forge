@@ -22,7 +22,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from .infra.anki import Anki
-from .infra.config import PROJECT_ROOT, load_config
+from .infra.config import PROJECT_ROOT, load_config, profile_cfg
 from .infra.db import connect
 from .infra.llm import LLM
 from .pipelines.answer_forge import AnswerForge, build_prompt
@@ -36,7 +36,8 @@ app = FastAPI(title="interview-forge")
 # ---------------- 健康 ----------------
 def get_health() -> dict:
     cfg = load_config()
-    out: dict = {"vault": cfg["obsidian"]["vault_abs"]}
+    # profile 一并带回：UI 用 topics 填主题下拉、field 显示领域（见 app.js loadHealth）
+    out: dict = {"vault": cfg["obsidian"]["vault_abs"], "profile": profile_cfg(cfg)}
     try:
         out["vllm"] = {"ok": True, "model": LLM(cfg).ping()}
     except Exception as e:  # noqa: BLE001
@@ -303,11 +304,26 @@ def jobs_stats():
 
 @app.post("/api/jobs/scan")
 def jobs_scan():
-    from .pipelines.jobs import load_folder
-    folder = load_config().get("jobs", {}).get("folder")
-    if not folder or not Path(folder).exists():
-        return JSONResponse({"error": f"JD 目录不存在：{folder}"}, status_code=404)
-    return load_folder(folder)
+    """扫描 config.jobs 配置的全部 JD 数据源（xlsx folder + json，都配了就都扫）。"""
+    from .pipelines.jobs import load_folder, load_json
+    j = load_config().get("jobs", {})
+    folder, json_src = j.get("folder"), j.get("json")
+    out = {"files": 0, "rows": 0, "inserted": 0, "skipped_dup": 0, "sources": []}
+    if folder and Path(folder).exists():
+        r = load_folder(folder)
+        out["sources"].append("xlsx")
+        for k in ("files", "rows", "inserted", "skipped_dup"):
+            out[k] += r.get(k, 0)
+    if json_src and Path(json_src).exists():
+        r = load_json(json_src)
+        out["sources"].append("json")
+        for k in ("files", "rows", "inserted", "skipped_dup"):
+            out[k] += r.get(k, 0)
+    if not out["sources"]:
+        return JSONResponse(
+            {"error": f"未找到 JD 数据源：folder={folder} / json={json_src}，"
+                      "请在 config.yaml 的 jobs 块配置至少一个"}, status_code=404)
+    return out
 
 
 class MatchBody(BaseModel):
@@ -364,7 +380,7 @@ def jobs_frontier(jd_id: int, k_per_query: int = 2, n_queries: int = 4):
 
 # ---------------- 模拟面试 Agent ----------------
 class MockStartBody(BaseModel):
-    topic: str = "inference"
+    topic: str = "general"
     jd_id: int | None = None
     n_questions: int = 4
 
