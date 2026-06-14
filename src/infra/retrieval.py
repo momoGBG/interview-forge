@@ -79,9 +79,16 @@ class Retriever:
         if not cands:
             return []
 
-        # reranker 精排（拿 context+content 一起，提升判别力）
+        # reranker 精排（拿 context+content 一起，提升判别力）。
+        # 精排失败(服务下线/模型名漂移)不应炸掉整个检索：降级用 RRF 融合顺序兜底。
         docs = [(h.context + "\n" + h.content).strip() for h in cands]
-        ranked = self.reranker.rerank(query, docs, top_k)
+        try:
+            ranked = self.reranker.rerank(query, docs, top_k)
+        except Exception as e:  # noqa: BLE001
+            import sys
+            print(f"[retrieval] rerank 失败,降级 RRF 排序: {type(e).__name__}: {str(e)[:120]}",
+                  file=sys.stderr, flush=True)
+            ranked = [(i, 0.0) for i in range(min(top_k, len(cands)))]
         out: list[Hit] = []
         for idx, score in ranked:
             h = cands[idx]
