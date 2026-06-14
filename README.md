@@ -1,10 +1,27 @@
 # interview-forge
 
+<p>
+  <img alt="license" src="https://img.shields.io/badge/license-MIT-blue">
+  <img alt="python" src="https://img.shields.io/badge/python-3.10%2B-3776ab">
+  <img alt="postgres" src="https://img.shields.io/badge/pgvector-Postgres16-336791">
+  <img alt="local-first" src="https://img.shields.io/badge/local--first-%E6%95%B0%E6%8D%AE%E4%B8%8D%E5%87%BA%E6%9C%BA-3ecf8e">
+</p>
+
 > 本地优先、RAG 驱动的「个人面试备战知识炼炉」。
 > 喂题目 → 产出**有结构、带出处、不吹牛**的答案 → 自动沉淀为 Obsidian 笔记 + Anki 卡片；
 > 导入简历 + JD → **AI 语义岗位匹配** + 一键生成《备考清单》；还能开一场**工具增强型模拟面试**。
 
 纯本地跑，数据不出机器。LLM / 向量 / 重排都接你自己的 OpenAI 兼容服务（本地 vLLM、Ollama，或云 API）。
+
+> **AI 岗位匹配**：导入简历 + JD 库，逐条语义匹配，给匹配度 + 命中优势 + 待补缺口，一键生成《备考清单》。
+
+![AI 岗位匹配](docs/assets/jobs.png)
+
+| 带出处的答案 | 模拟面试 · 五维 grounded 评分 |
+|:---:|:---:|
+| ![提问](docs/assets/ask.png) | ![模拟面试](docs/assets/mock.png) |
+| **权威源摄入知识库** | **题库 · 可溯源答案** |
+| ![知识库](docs/assets/kb.png) | ![题库](docs/assets/lib.png) |
 
 > **关于数据来源**：本项目**不含任何招聘平台爬虫**。JD 数据怎么来由你决定——手动整理、
 > 内部系统导出、或你自己的私有脚本。只要产出符合 [`docs/DATA_SCHEMA.md`](docs/DATA_SCHEMA.md)

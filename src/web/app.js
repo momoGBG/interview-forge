@@ -1,5 +1,5 @@
 // ---------- 轻量 markdown 渲染（自带，无需 CDN，离线可用）----------
-function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
 
 // ---------- chunk 溯源弹层：点 [chunk_N] / 引用 chip 看原文片段 ----------
 function closeChunk(){const ov=document.getElementById("chunkModal");if(ov)ov.style.display="none";}
@@ -265,10 +265,10 @@ async function viewAns(qid){
   let cites="";
   if(a.citations&&a.citations.length)cites='<div class="chips">'+a.citations.map(c=>
     `<span class="chip click" onclick="showChunk(${c.chunk_id})" title="点击看原文片段">chunk_${c.chunk_id} · ${c.source_title}</span>`).join("")+'</div>';
+  // deep 即完整答案 markdown(自带「## 口述版/深挖版」标题),直接渲染,避免口述版重复两遍
   v.innerHTML=`<h2 style="margin-top:0">${a.question}</h2>`+
     (a.grounded?'<span class="badge ok">✓ 有出处</span>':'<span class="badge bad">⚠ 未接地气</span>')+cites+
-    '<h3 style="color:var(--accent)">口述版</h3><div class="md">'+renderMD(a.oral||"")+'</div>'+
-    '<h3 style="color:var(--accent)">深挖版</h3><div class="md">'+renderMD(a.deep||"")+'</div>';
+    '<div class="md">'+renderMD(a.deep||a.oral||"")+'</div>';
   v.scrollIntoView({behavior:"smooth"});
 }
 async function genOne(qid,btn){
@@ -563,5 +563,11 @@ document.getElementById("mockFinishBtn").onclick=async()=>{
     rb.disabled=false;rb.textContent="再次强化";
   };
 };
+
+// ---------- 快捷键：Ctrl/⌘+Enter 提交 ----------
+document.getElementById("q").addEventListener("keydown",e=>{
+  if((e.ctrlKey||e.metaKey)&&e.key==="Enter"){e.preventDefault();askBtn.click();}});
+document.getElementById("mockAns").addEventListener("keydown",e=>{
+  if((e.ctrlKey||e.metaKey)&&e.key==="Enter"){e.preventDefault();document.getElementById("mockSendBtn").click();}});
 
 loadHealth();
